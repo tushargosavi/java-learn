@@ -65,19 +65,19 @@ public class BAObject
     return new Slice(arr);
   }
 
-  Object[] getGetters() {
+  public Object[] getGetters() {
     return getters;
   }
 
-  Object getGetter(String name) {
+  public Object getGetter(String name) {
     return getterMap.get(name);
   }
 
-  Object[] getSetters() {
+  public Object[] getSetters() {
     return setters;
   }
 
-  Object getSetter(String name) {
+  public Object getSetter(String name) {
     return setterMap.get(name);
   }
 }

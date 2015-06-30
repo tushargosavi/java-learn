@@ -1,6 +1,7 @@
 package com.tugo.dt.bao;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.tugo.dt.PojoUtils;
 
@@ -52,15 +53,11 @@ public class PojoAnalyzer<T>
     }
   }
 
-  private List<Field> fieldList;
-  private List<Method> getterMethodList;
-  private List<Method> setterMethodList;
+  private final Map<String, Object> getterMap = Maps.newHashMap();
+  private final Map<String, Object> setterMap = Maps.newHashMap();
 
-  private Map<String, String> getterExpressions;
-  private Map<String, String> setterExpressions;
-
-  private Map<String, Object> getterMap;
-  private Map<String, Object> setterMap;
+  List<FieldInfoWithGetterSetter> fieldInfoList = new ArrayList<FieldInfoWithGetterSetter>();
+  Map<String, FieldInfoWithGetterSetter> fieldsMap = Maps.newHashMap();
 
   public PojoAnalyzer(Class<T> klass)
   {
@@ -70,11 +67,10 @@ public class PojoAnalyzer<T>
 
   private void analyzeClass()
   {
-    fieldList = findFields();
-    getterMethodList = findGetterMethods();
-    setterMethodList = findSetterMethods();
-    getterExpressions  = generateGetterExpressions();
-    setterExpressions = generateSetterExpressions();
+    findPublicFields();
+    findGetterMethods();
+    findSetterMethods();
+    fieldInfoList = generateFastGettersAndSetters();
   }
 
 
@@ -83,7 +79,7 @@ public class PojoAnalyzer<T>
    *
    * @return
    */
-  public List<Field> findFields()
+  public void findPublicFields()
   {
     List<Field> lst = new ArrayList<Field>();
     for (Field f : klass.getFields()) {
@@ -91,9 +87,15 @@ public class PojoAnalyzer<T>
       if (TypeInfo.isTypeSupported(type)) {
         System.out.println("fild " + f.getName() + " type " + f.getType());
         lst.add(f);
+        FieldInfoWithGetterSetter fi = new FieldInfoWithGetterSetter();
+        fi.name = f.getName();
+        fi.type = TypeInfo.getNameFromType(f.getType());
+        fi.getterExpr = fi.name;
+        fi.setterExpr = fi.name;
+        fieldsMap.put(fi.name, fi);
+        fieldInfoList.add(fi);
       }
     }
-    return lst;
   }
 
   /**
@@ -105,69 +107,40 @@ public class PojoAnalyzer<T>
    *
    * @return List of methods found.
    */
-  public List<Method> findGetterMethods()
+  public void findGetterMethods()
   {
     List<Method> lst = new ArrayList<Method>();
     for (Method m : klass.getMethods()) {
-      String name = m.getName();
+      String mName = m.getName();
       Class<?>[] params = m.getParameterTypes();
-      if (name.startsWith("get") && params.length == 0 && TypeInfo.isNumericType(m.getReturnType())) {
-        lst.add(m);
+      if (mName.startsWith("get") && params.length == 0 && TypeInfo.isNumericType(m.getReturnType())) {
+        String name = getFieldNameFromGetter(m.getName());
+        FieldInfoWithGetterSetter fi = fieldsMap.get(name);
+        if (fi == null) {
+          fi = new FieldInfoWithGetterSetter();
+          fi.name = name;
+          fi.type = TypeInfo.getNameFromType(m.getReturnType());
+          fieldsMap.put(fi.name, fi);
+          fieldInfoList.add(fi);
+        }
+        fi.getterExpr = "{$}." + m.getName() + "()";
       }
     }
-    return lst;
   }
 
-  public List<Method> findSetterMethods()
+  public void findSetterMethods()
   {
-    List<Method> lst = new ArrayList<Method>();
     for (Method m : klass.getMethods()) {
-      String name = m.getName();
+      String Mname = m.getName();
       Class<?>[] params = m.getParameterTypes();
-      if (name.startsWith("set") && params.length == 1 && TypeInfo.isNumericType(params[0])) {
-        lst.add(m);
+      if (Mname.startsWith("set") && params.length == 1 && TypeInfo.isNumericType(params[0])) {
+        String name = getFieldNameFromGetter(m.getName());
+        FieldInfoWithGetterSetter fi = fieldsMap.get(name);
+        if (fi != null) {
+          fi.setterExpr = "{$}." + m.getName() + "({#})" ;
+        }
       }
     }
-    return lst;
-  }
-
-  public Map<String, String> generateGetterExpressions()
-  {
-
-    Map<String, String> exprs = Maps.newHashMap();
-    for (Field f : fieldList) {
-      exprs.put(f.getName(), f.getName());
-    }
-
-    for (Method m : getterMethodList) {
-      exprs.put(getFieldNameFromGetter(m.getName()), m.getName() + "()");
-    }
-    return exprs;
-  }
-
-
-  private Map<String, String> generateSetterExpressions()
-  {
-
-    Map<String, String> exprs = Maps.newHashMap();
-    for (Field f : fieldList) {
-      exprs.put(f.getName(), f.getName());
-    }
-
-    for (Method m : setterMethodList) {
-      exprs.put(getFieldNameFromGetter(m.getName()), m.getName() + "()");
-    }
-    return exprs;
-  }
-
-
-  public Map<String, String> generateFieldTypeMapping()
-  {
-    Map<String, String> exprs = Maps.newHashMap();
-    for (Field f : fieldList) {
-      exprs.put(f.getName(), TypeInfo.getNameFromType(f.getType()));
-    }
-    return exprs;
   }
 
   private String getFieldNameFromGetter(String name)
@@ -181,28 +154,17 @@ public class PojoAnalyzer<T>
   public List<FieldInfoWithGetterSetter> generateFastGettersAndSetters()
   {
     List<FieldInfoWithGetterSetter> lst = new ArrayList<FieldInfoWithGetterSetter>();
-    for(Field f : fieldList) {
-      FieldInfoWithGetterSetter finfo = new FieldInfoWithGetterSetter();
-      finfo.name = f.getName();
-      finfo.type = TypeInfo.getNameFromType(f.getType());
-      finfo.getterExpr = finfo.name;
-      finfo.setterExpr = finfo.name;
-      finfo.updateGettersAndSetters(klass);
-      getterMap.put(finfo.name, finfo.getter);
-      setterMap.put(finfo.name, finfo.setter);
-      lst.add(finfo);
+    for(FieldInfoWithGetterSetter fi : fieldInfoList) {
+      if (fi.getterExpr == null || fi.setterExpr == null) {
+        System.out.println("getter or setter set numm for " + fi.name);
+        continue;
+      }
+      fi.updateGettersAndSetters(klass);
+      getterMap.put(fi.name, fi.getter);
+      setterMap.put(fi.name, fi.setter);
+      lst.add(fi);
     }
     return lst;
-  }
-
-  public List<Method> getGetterMethodList()
-  {
-    return getterMethodList;
-  }
-
-  public List<Method> getSetterMethodList()
-  {
-    return setterMethodList;
   }
 
   public Object getGetter(String name) {
@@ -211,5 +173,10 @@ public class PojoAnalyzer<T>
 
   public Object getSetter(String name) {
     return setterMap.get(name);
+  }
+
+  public List<FieldInfoWithGetterSetter> getFieldInfoList()
+  {
+    return fieldInfoList;
   }
 }

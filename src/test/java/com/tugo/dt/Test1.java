@@ -2,6 +2,7 @@ package com.tugo.dt;
 
 import com.datatorrent.common.util.Slice;
 import com.tugo.dt.PojoUtils.GetterInt;
+import com.tugo.dt.bao.BAObject;
 import com.tugo.dt.bao.ByteArrayGetters;
 import com.tugo.dt.bao.PojoAdapter;
 import com.tugo.dt.bao.PojoAnalyzer;
@@ -15,9 +16,14 @@ public class Test1
   public static class SimpleClass
   {
     public int field1;
-    private int field2;
+    private  int field2;
 
     public int getField2() { return field2; }
+
+    public void setField2(int field2)
+    {
+      this.field2 = field2;
+    }
   }
 
   @Test
@@ -71,7 +77,7 @@ public class Test1
     PojoAnalyzer pa = new PojoAnalyzer(SimpleClass.class);
     List<PojoAnalyzer.FieldInfoWithGetterSetter> lst = pa.generateFastGettersAndSetters();
     SimpleClass s = new SimpleClass();
-    s.field1 = 10;
+    s.field1 = 12;
     s.field2 = 23;
     for(PojoAnalyzer.FieldInfoWithGetterSetter l : lst) {
       System.out.println("name " + l.name);
@@ -82,6 +88,13 @@ public class Test1
   public void test5()
   {
     PojoAdapter<SimpleClass> pa = new PojoAdapter<SimpleClass>(SimpleClass.class);
-    Slice s = pa.getNewBaoInstance();
+    SimpleClass s = new SimpleClass();
+    s.field1 = 16;
+    s.field2 = 23;
+    Slice slice = pa.getNewBaoInstance(s);
+
+    BAObject bao = pa.getBao();
+    GetterInt gi = (GetterInt) bao.getGetter("field1");
+    System.out.println("get from slice " + gi.get(slice));
   }
 }
