@@ -4,6 +4,7 @@ import com.datatorrent.common.util.Slice;
 import com.google.common.collect.Maps;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -19,8 +20,9 @@ public class BAObject
     Object setter;
   }
 
-  DataDescriptor.FieldList flist;
-  List<BAOField> baoFieldList;
+  DataDescriptor.FieldList origFieldList;
+  DataDescriptor.FieldList baoFieldList;
+  List<BAOField> baoFields;
 
   int size = 0;
   Object[] getters;
@@ -31,18 +33,18 @@ public class BAObject
 
   public BAObject(DataDescriptor.FieldList list)
   {
-    flist = list;
+    origFieldList = list;
     initialize();
   }
 
   private void initialize()
   {
     int offset = 0;
-    setters = new Object[flist.size()];
-    getters = new Object[flist.size()];
-    baoFieldList = new ArrayList<BAOField>();
+    setters = new Object[origFieldList.size()];
+    getters = new Object[origFieldList.size()];
+    baoFields = new ArrayList<BAOField>();
     int i = 0;
-    for(DataDescriptor.Field f : flist.fields) {
+    for(DataDescriptor.Field f : origFieldList.fields) {
       BAOField bf = new BAOField();
       bf.offset = offset;
       bf.name = f.name;
@@ -55,9 +57,10 @@ public class BAObject
       setterMap.put(f.name, bf.setter);
       i++;
       offset += TypeInfo.getSize(f.type);
-      baoFieldList.add(bf);
+      baoFields.add(bf);
     }
     size = offset;
+    baoFieldList = new DataDescriptor.FieldList(baoFields);
   }
 
   public Slice getNewObject() {
@@ -79,5 +82,12 @@ public class BAObject
 
   public Object getSetter(String name) {
     return setterMap.get(name);
+  }
+
+
+  public BAObject getSubView(Collection<String> fieldNames)
+  {
+    DataDescriptor.FieldList subFields = baoFieldList.getSubSet(fieldNames);
+    return new BAObject(subFields);
   }
 }

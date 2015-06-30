@@ -1,5 +1,7 @@
 package com.tugo.dt.bao;
 
+import com.google.common.collect.Maps;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -21,30 +23,71 @@ public class DataDescriptor
     }
   }
 
-  public static class FieldList {
-    List<Field> fields;
-    private Map<String, Field> fieldMap;
-    private Map<String, String> fieldToTypeMap;
+  public static class FieldWithGetterSetter extends Field
+  {
+    Object getter = null;
+    Object setter = null;
 
-    public FieldList(List<Field> fields)
+    public FieldWithGetterSetter()
+    {
+    }
+
+    public FieldWithGetterSetter(String name, String type, Object getter, Object setter)
+    {
+      super(name, type);
+      this.getter = getter;
+      this.setter = setter;
+    }
+
+    public Object getGetter()
+    {
+      return getter;
+    }
+
+    public void setGetter(Object getter)
+    {
+      this.getter = getter;
+    }
+
+    public Object getSetter()
+    {
+      return setter;
+    }
+
+    public void setSetter(Object setter)
+    {
+      this.setter = setter;
+    }
+  }
+
+  public static class FieldList {
+    List<? extends Field> fields;
+    private final Map<String, Field> fieldMap = Maps.newHashMap();
+
+    public FieldList(List<? extends Field> fields)
     {
       this.fields = fields;
+      generateLookupMaps();
+    }
+
+    private void generateLookupMaps()
+    {
+      for(Field f : fields) {
+        fieldMap.put(f.name, f);
+      }
     }
 
     /*
-    No duplicate field and type which are supported by bytearray implementations.
+    No duplicate field and type which are supported by byte array implementations.
      */
     public boolean validate()
     {
       return true;
     }
 
-    public Field getField(String name) {
-      return fieldMap.get(name);
-    }
 
     public String getFieldType(String name) {
-      return fieldToTypeMap.get(name);
+      return fieldMap.get(name).type;
     }
 
     public FieldList getSubSet(Collection<String> fieldNames)
@@ -60,6 +103,16 @@ public class DataDescriptor
     {
       return fields.size();
     }
+
+    public boolean contains(String name)
+    {
+      return fieldMap.containsKey(name);
+    }
+
+    public Field getField(String name) {
+      return fieldMap.get(name);
+    }
+
   }
 
 }

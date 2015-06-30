@@ -6,6 +6,7 @@ import com.google.common.collect.Maps;
 import com.tugo.dt.PojoUtils;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -98,15 +99,29 @@ public class PojoAdapter<T>
 
   public PojoAdapter(Class<T> klass)
   {
-    this.klass = klass;
-    analyzer = new PojoAnalyzer(klass);
-    initialize();
+    this(klass, null);
   }
 
-  private void initialize()
+  public PojoAdapter(Class<T> klass, Collection<String> fieldNames)
   {
-    List<DataDescriptor.Field> list = analyzer.getFieldInfoList();
-    flist = new DataDescriptor.FieldList(list);
+    this.klass = klass;
+    analyzer = new PojoAnalyzer(klass);
+    initialize(fieldNames);
+  }
+
+  public PojoAdapter(PojoAnalyzer<T> analyzer, Collection<String> fieldNames)
+  {
+    this.analyzer = analyzer;
+    this.klass = analyzer.getPojoClass();
+    initialize(fieldNames);
+  }
+
+  private void initialize(Collection<String> fieldNames)
+  {
+    flist = analyzer.getFieldList();
+    /* select only selected fields */
+    if (fieldNames != null)
+      flist = flist.getSubSet(fieldNames);
     bao = new BAObject(flist);
     createAdapterFields();
   }
@@ -181,5 +196,10 @@ public class PojoAdapter<T>
     Slice s = bao.getNewObject();
     copyFromPojo(flist, obj, s);
     return s;
+  }
+
+  public PojoAdapter getSubView(Collection<String> fieldNames)
+  {
+    return new PojoAdapter(analyzer, fieldNames);
   }
 }

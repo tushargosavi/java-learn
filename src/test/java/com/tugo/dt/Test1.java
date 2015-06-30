@@ -9,6 +9,7 @@ import com.tugo.dt.bao.PojoAnalyzer;
 import org.junit.Test;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Test1
@@ -87,7 +88,7 @@ public class Test1
   @Test
   public void test5()
   {
-    PojoAdapter<SimpleClass> pa = new PojoAdapter<SimpleClass>(SimpleClass.class);
+    PojoAdapter<SimpleClass> pa = new PojoAdapter<SimpleClass>(SimpleClass.class, null);
     SimpleClass s = new SimpleClass();
     s.field1 = 16;
     s.field2 = 23;
@@ -96,5 +97,12 @@ public class Test1
     BAObject bao = pa.getBao();
     GetterInt gi = (GetterInt) bao.getGetter("field1");
     System.out.println("get from slice " + gi.get(slice));
+    System.out.println("all field size " + slice.length);
+
+    List l = new ArrayList();
+    l.add("field2");
+    PojoAdapter pa1 = pa.getSubView(l);
+    Slice s1 = pa1.getNewBaoInstance(s);
+    System.out.println("length of sub view " + s1.length);
   }
 }

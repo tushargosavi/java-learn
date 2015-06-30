@@ -19,6 +19,11 @@ public class PojoAnalyzer<T>
 {
   Class<T> klass;
 
+  public Class<T> getPojoClass()
+  {
+    return klass;
+  }
+
   /**
    * A information about the field in Pojo with getter and setter interfaces.
    */
@@ -56,8 +61,9 @@ public class PojoAnalyzer<T>
   private final Map<String, Object> getterMap = Maps.newHashMap();
   private final Map<String, Object> setterMap = Maps.newHashMap();
 
-  List<FieldInfoWithGetterSetter> fieldInfoList = new ArrayList<FieldInfoWithGetterSetter>();
-  Map<String, FieldInfoWithGetterSetter> fieldsMap = Maps.newHashMap();
+  public DataDescriptor.FieldList fieldList;
+  private List<FieldInfoWithGetterSetter> fieldInfoList = new ArrayList<FieldInfoWithGetterSetter>();
+  private Map<String, FieldInfoWithGetterSetter> fieldsMap = Maps.newHashMap();
 
   public PojoAnalyzer(Class<T> klass)
   {
@@ -71,6 +77,7 @@ public class PojoAnalyzer<T>
     findGetterMethods();
     findSetterMethods();
     fieldInfoList = generateFastGettersAndSetters();
+    fieldList = new DataDescriptor.FieldList(fieldInfoList);
   }
 
 
@@ -175,8 +182,8 @@ public class PojoAnalyzer<T>
     return setterMap.get(name);
   }
 
-  public List<FieldInfoWithGetterSetter> getFieldInfoList()
+  public DataDescriptor.FieldList getFieldList()
   {
-    return fieldInfoList;
+    return fieldList;
   }
 }
