@@ -4,7 +4,7 @@ import com.datatorrent.common.util.Slice;
 import com.tugo.dt.PojoUtils.GetterInt;
 import com.tugo.dt.bao.BAObject;
 import com.tugo.dt.bao.SliceGetters;
-import com.tugo.dt.bao.PojoToBoaAdapter;
+import com.tugo.dt.bao.PojoAdapter;
 import com.tugo.dt.bao.PojoAnalyzer;
 import org.junit.Test;
 
@@ -88,7 +88,7 @@ public class Test1
   @Test
   public void test5()
   {
-    PojoToBoaAdapter<SimpleClass> pa = new PojoToBoaAdapter<SimpleClass>(SimpleClass.class, null);
+    PojoAdapter<SimpleClass> pa = new PojoAdapter<SimpleClass>(SimpleClass.class, null);
     SimpleClass s = new SimpleClass();
     s.field1 = 16;
     s.field2 = 23;
@@ -101,7 +101,7 @@ public class Test1
 
     List l = new ArrayList();
     l.add("field2");
-    PojoToBoaAdapter pa1 = pa.getSubView(l);
+    PojoAdapter pa1 = pa.getSubView(l);
     Slice s1 = pa1.getNewBaoInstance(s);
     System.out.println("length of sub view " + s1.length);
   }

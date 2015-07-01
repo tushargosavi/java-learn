@@ -13,6 +13,11 @@ import java.util.Map;
  */
 public class BAObject
 {
+  public DataDescriptor.FieldList getFieldList()
+  {
+    return baoFieldList;
+  }
+
   static class BAOField extends DataDescriptor.Field
   {
     int offset;

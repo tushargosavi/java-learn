@@ -6,28 +6,28 @@ import java.util.Collection;
 /**
  * Adapter between BAO and Pojo. Currently assume that all fields are public.
  */
-public class PojoToBoaAdapter<T> extends AbstractAdapter
+public class PojoAdapter<T> extends AbstractAdapter
 {
   Class<T> klass;
   PojoAnalyzer analyzer;
 
-  public PojoToBoaAdapter()
+  public PojoAdapter()
   {
   }
 
-  public PojoToBoaAdapter(Class<T> klass)
+  public PojoAdapter(Class<T> klass)
   {
     this(klass, null);
   }
 
-  public PojoToBoaAdapter(Class<T> klass, Collection<String> fieldNames)
+  public PojoAdapter(Class<T> klass, Collection<String> fieldNames)
   {
     this.klass = klass;
     analyzer = new PojoAnalyzer(klass);
     initialize(fieldNames);
   }
 
-  public PojoToBoaAdapter(PojoAnalyzer<T> analyzer, Collection<String> fieldNames)
+  public PojoAdapter(PojoAnalyzer<T> analyzer, Collection<String> fieldNames)
   {
     this.analyzer = analyzer;
     this.klass = analyzer.getPojoClass();
@@ -59,8 +59,8 @@ public class PojoToBoaAdapter<T> extends AbstractAdapter
     }
   }
 
-  public PojoToBoaAdapter getSubView(Collection<String> fieldNames)
+  public PojoAdapter getSubView(Collection<String> fieldNames)
   {
-    return new PojoToBoaAdapter(analyzer, fieldNames);
+    return new PojoAdapter(analyzer, fieldNames);
   }
 }
