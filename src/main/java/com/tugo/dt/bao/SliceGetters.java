@@ -122,22 +122,25 @@ public class SliceGetters
 
   /* TODO cache getters as they can be reused */
   public static Object createGetter(DataDescriptor.Field f, int offset) {
-    if (f.type.equals("bool"))
+    switch(f.typeInfo) {
+    case BOOLEAN:
       return new BooleanGetter(offset);
-    if (f.type.equals("byte"))
+    case BYTE:
       return new ByteGetter(offset);
-    if (f.type.equals("char"))
+    case CHAR:
       return new CharGetter(offset);
-    if (f.type.equals("short"))
-      return new ShortGetter(offset);
-    if (f.type.equals("int"))
-      return new IntGetter(offset);
-    if (f.type.equals("long"))
-      return new LongGeeter(offset);
-    if (f.type.equals("float"))
-      return new FloatGetter(offset);
-    if (f.type.equals("double"))
-      return new DoubleGetter(offset);
-    return null;
+    case SHORT:
+       return new ShortGetter(offset);
+    case INT:
+        return new IntGetter(offset);
+    case LONG:
+        return new LongGeeter(offset);
+    case FLOAT:
+        return new FloatGetter(offset);
+    case DOUBLE:
+        return new DoubleGetter(offset);
+    default:
+      return null;
+    }
   }
 }

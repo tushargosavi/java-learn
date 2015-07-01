@@ -12,14 +12,23 @@ public class DataDescriptor
 
   public static class Field
   {
-    public String name;
-    public String type;
+    public final String name;
+    public final TypeInfo typeInfo;
 
-    public Field() { }
     public Field(String name, String type)
     {
       this.name = name;
-      this.type = type;
+      this.typeInfo = TypeInfo.getTypeInfo(type);
+    }
+
+    public Field(String name, TypeInfo ti) {
+      this.name = name;
+      this.typeInfo = ti;
+    }
+
+    public TypeInfo getTypeInfo()
+    {
+      return typeInfo;
     }
   }
 
@@ -27,10 +36,6 @@ public class DataDescriptor
   {
     Object getter = null;
     Object setter = null;
-
-    public FieldWithGetterSetter()
-    {
-    }
 
     public FieldWithGetterSetter(String name, String type, Object getter, Object setter)
     {
@@ -85,9 +90,9 @@ public class DataDescriptor
       return true;
     }
 
-
-    public String getFieldType(String name) {
-      return fieldMap.get(name).type;
+    public String getFieldType(String name)
+    {
+      return fieldMap.get(name).getTypeInfo().getName();
     }
 
     public FieldList getSubSet(Collection<String> fieldNames)

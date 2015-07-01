@@ -23,6 +23,11 @@ public class BAObject
     int offset;
     Object getter;
     Object setter;
+
+    public BAOField(String name, TypeInfo typeInfo)
+    {
+      super(name, typeInfo);
+    }
   }
 
   DataDescriptor.FieldList origFieldList;
@@ -50,10 +55,8 @@ public class BAObject
     baoFields = new ArrayList<BAOField>();
     int i = 0;
     for(DataDescriptor.Field f : origFieldList.fields) {
-      BAOField bf = new BAOField();
+      BAOField bf = new BAOField(f.name, f.getTypeInfo());
       bf.offset = offset;
-      bf.name = f.name;
-      bf.type = f.type;
       bf.getter = SliceGetters.createGetter(f, offset);
       bf.setter = SliceSetters.createSetter(f, offset);
       getters[i] = bf.getter;
@@ -61,7 +64,7 @@ public class BAObject
       getterMap.put(f.name, bf.getter);
       setterMap.put(f.name, bf.setter);
       i++;
-      offset += TypeInfo.getSize(f.type);
+      offset += bf.getTypeInfo().getSize();
       baoFields.add(bf);
     }
     size = offset;

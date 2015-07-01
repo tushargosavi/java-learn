@@ -47,9 +47,7 @@ public class PojoAdapter<T> extends AbstractAdapter
   private void createAdapterFields()
   {
     for(DataDescriptor.Field f : flist.fields) {
-      AdapterField af = new AdapterField();
-      af.name = f.name;
-      af.type = f.type;
+      AdapterField af = new AdapterField(f.name, f.typeInfo);
       af.baoGetter = bao.getGetter(f.name);
       af.baoSetter = bao.getSetter(f.name);
       af.pojoGetter = analyzer.getGetter(f.name);

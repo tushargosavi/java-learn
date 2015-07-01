@@ -10,20 +10,23 @@ public class AdapterField<T> extends DataDescriptor.Field {
   Object baoGetter;
   Object baoSetter;
 
+  public AdapterField(String name, TypeInfo typeInfo)
+  {
+    super(name, typeInfo);
+  }
+
   public void copyFromPojoToBao(T from, Slice to)
   {
-    TypeInfo ti = TypeInfo.getTypeInfo(type);
     Object getter = pojoGetter;
     Object setter = baoSetter;
-    transferField(ti, getter, setter, from, to);
+    transferField(typeInfo, getter, setter, from, to);
   }
 
   public void copyFromBaoToPojo(Slice from, T to)
   {
-    TypeInfo ti = TypeInfo.getTypeInfo(type);
     Object getter = baoGetter;
     Object setter = pojoSetter;
-    transferField(ti, getter, setter, from, to);
+    transferField(typeInfo, getter, setter, from, to);
   }
 
   private void transferField(TypeInfo ti, Object getter, Object setter, Object from, Object to)

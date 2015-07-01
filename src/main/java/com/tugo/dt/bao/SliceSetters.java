@@ -110,23 +110,27 @@ public class SliceSetters
   }
 
   /* TODO cache getters as they can be reused */
-  public static Object createSetter(DataDescriptor.Field f, int offset) {
-    if (f.type.equals("bool"))
+  public static Object createSetter(DataDescriptor.Field f, int offset)
+  {
+    switch (f.getTypeInfo()) {
+    case BOOLEAN:
       return new BooleanSetter(offset);
-    if (f.type.equals("byte"))
+    case BYTE:
       return new ByteSetter(offset);
-    if (f.type.equals("char"))
+    case CHAR:
       return new CharSetter(offset);
-    if (f.type.equals("short"))
+    case SHORT:
       return new ShortSetter(offset);
-    if (f.type.equals("int"))
+    case INT:
       return new IntSetter(offset);
-    if (f.type.equals("long"))
+    case LONG:
       return new LongSetter(offset);
-    if (f.type.equals("float"))
+    case FLOAT:
       return new FloatSetter(offset);
-    if (f.type.equals("double"))
+    case DOUBLE:
       return new DoubleSetter(offset);
-    return null;
+    default:
+      return null;
+    }
   }
 }

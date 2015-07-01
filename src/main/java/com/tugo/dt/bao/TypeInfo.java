@@ -132,4 +132,9 @@ public enum TypeInfo
   public static boolean isNumericType(Class klass) {
     return numericClasses.contains(klass);
   }
+
+  public static TypeInfo getTypeInfoFromClass(Class<?> type)
+  {
+    return classToTypeMap.get(type);
+  }
 }

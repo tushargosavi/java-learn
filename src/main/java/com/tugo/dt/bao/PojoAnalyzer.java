@@ -45,6 +45,11 @@ public class PojoAnalyzer<T>
      */
     String setterExpr;
 
+    public FieldInfoWithGetterSetter(String name, TypeInfo ti)
+    {
+      super(name, ti);
+    }
+
     /**
      * Create getter and setter based on getterExpression and setterExpression.
      * @param klass
@@ -53,8 +58,8 @@ public class PojoAnalyzer<T>
     {
       Preconditions.checkNotNull(getterExpr);
       Preconditions.checkNotNull(setterExpr);
-      getter = PojoUtils.constructGetter(klass, getterExpr, TypeInfo.getTypeInfo(type).getTypeClass());
-      setter = PojoUtils.constructSetter(klass, setterExpr, "{$}", "{#}", TypeInfo.getTypeInfo(type).getTypeClass());
+      getter = PojoUtils.constructGetter(klass, getterExpr, typeInfo.getTypeClass());
+      setter = PojoUtils.constructSetter(klass, setterExpr, "{$}", "{#}", typeInfo.getTypeClass());
     }
   }
 
@@ -94,9 +99,7 @@ public class PojoAnalyzer<T>
       if (TypeInfo.isTypeSupported(type)) {
         System.out.println("fild " + f.getName() + " type " + f.getType());
         lst.add(f);
-        FieldInfoWithGetterSetter fi = new FieldInfoWithGetterSetter();
-        fi.name = f.getName();
-        fi.type = TypeInfo.getNameFromType(f.getType());
+        FieldInfoWithGetterSetter fi = new FieldInfoWithGetterSetter(f.getName(), TypeInfo.getTypeInfoFromClass(f.getType()));
         fi.getterExpr = fi.name;
         fi.setterExpr = fi.name;
         fieldsMap.put(fi.name, fi);
@@ -124,9 +127,7 @@ public class PojoAnalyzer<T>
         String name = getFieldNameFromGetter(m.getName());
         FieldInfoWithGetterSetter fi = fieldsMap.get(name);
         if (fi == null) {
-          fi = new FieldInfoWithGetterSetter();
-          fi.name = name;
-          fi.type = TypeInfo.getNameFromType(m.getReturnType());
+          fi = new FieldInfoWithGetterSetter(m.getName(), TypeInfo.getTypeInfoFromClass(m.getReturnType()));
           fieldsMap.put(fi.name, fi);
           fieldInfoList.add(fi);
         }
