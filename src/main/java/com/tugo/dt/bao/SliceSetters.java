@@ -3,9 +3,9 @@ package com.tugo.dt.bao;
 import com.datatorrent.common.util.Slice;
 import com.tugo.dt.PojoUtils;
 
-public class ByteArraySetters
+public class SliceSetters
 {
-  public static class BooleanSetter extends ByteArrayGetters.ByteArrayGetterBase implements PojoUtils.SetterBoolean<Slice>
+  public static class BooleanSetter extends SliceGetters.ByteArrayGetterBase implements PojoUtils.SetterBoolean<Slice>
   {
     public BooleanSetter(int start)
     {
@@ -18,7 +18,7 @@ public class ByteArraySetters
     }
   }
 
-  public static class ByteSetter extends ByteArrayGetters.ByteArrayGetterBase implements PojoUtils.SetterByte<Slice>
+  public static class ByteSetter extends SliceGetters.ByteArrayGetterBase implements PojoUtils.SetterByte<Slice>
   {
     public ByteSetter(int start)
     {
@@ -31,7 +31,7 @@ public class ByteArraySetters
     }
   }
 
-  public static class CharSetter extends ByteArrayGetters.ByteArrayGetterBase implements PojoUtils.SetterChar<Slice>
+  public static class CharSetter extends SliceGetters.ByteArrayGetterBase implements PojoUtils.SetterChar<Slice>
   {
     public void set(Slice obj, char charVal)
     {
@@ -44,7 +44,7 @@ public class ByteArraySetters
     }
   }
 
-  public static class ShortSetter extends ByteArrayGetters.ByteArrayGetterBase implements PojoUtils.SetterShort<Slice>
+  public static class ShortSetter extends SliceGetters.ByteArrayGetterBase implements PojoUtils.SetterShort<Slice>
   {
     public ShortSetter(int start)
     {
@@ -57,7 +57,7 @@ public class ByteArraySetters
     }
   }
 
-  public static class IntSetter extends ByteArrayGetters.ByteArrayGetterBase implements PojoUtils.SetterInt<Slice>
+  public static class IntSetter extends SliceGetters.ByteArrayGetterBase implements PojoUtils.SetterInt<Slice>
   {
     public IntSetter(int start)
     {
@@ -70,7 +70,7 @@ public class ByteArraySetters
     }
   }
 
-  public static class LongSetter extends ByteArrayGetters.ByteArrayGetterBase implements PojoUtils.SetterLong<Slice>
+  public static class LongSetter extends SliceGetters.ByteArrayGetterBase implements PojoUtils.SetterLong<Slice>
   {
     public LongSetter(int start)
     {
@@ -83,7 +83,7 @@ public class ByteArraySetters
     }
   }
 
-  public static class FloatSetter extends ByteArrayGetters.ByteArrayGetterBase implements PojoUtils.SetterFloat<Slice>
+  public static class FloatSetter extends SliceGetters.ByteArrayGetterBase implements PojoUtils.SetterFloat<Slice>
   {
     public void set(Slice obj, float floatVal)
     {
@@ -96,7 +96,7 @@ public class ByteArraySetters
     }
   }
 
-  public static class DoubleSetter extends ByteArrayGetters.ByteArrayGetterBase implements PojoUtils.SetterDouble<Slice>
+  public static class DoubleSetter extends SliceGetters.ByteArrayGetterBase implements PojoUtils.SetterDouble<Slice>
   {
     public void set(Slice obj, double doubleVal)
     {

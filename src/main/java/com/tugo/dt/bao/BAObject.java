@@ -49,8 +49,8 @@ public class BAObject
       bf.offset = offset;
       bf.name = f.name;
       bf.type = f.type;
-      bf.getter = ByteArrayGetters.createGetter(f, offset);
-      bf.setter = ByteArraySetters.createSetter(f, offset);
+      bf.getter = SliceGetters.createGetter(f, offset);
+      bf.setter = SliceSetters.createSetter(f, offset);
       getters[i] = bf.getter;
       setters[i] = bf.setter;
       getterMap.put(f.name, bf.getter);
@@ -90,4 +90,5 @@ public class BAObject
     DataDescriptor.FieldList subFields = baoFieldList.getSubSet(fieldNames);
     return new BAObject(subFields);
   }
+
 }

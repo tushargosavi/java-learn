@@ -5,7 +5,7 @@ import com.sun.org.apache.xpath.internal.operations.Bool;
 import com.tugo.dt.PojoUtils;
 import org.omg.PortableServer.POA;
 
-public class ByteArrayGetters
+public class SliceGetters
 {
   public static class ByteArrayGetterBase
   {
