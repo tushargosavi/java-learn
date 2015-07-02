@@ -50,6 +50,11 @@ public class PojoAnalyzer<T>
       super(name, ti);
     }
 
+    public FieldInfoWithGetterSetter(DataDescriptor.Field f)
+    {
+      super(f.name, f.getTypeInfo());
+    }
+
     /**
      * Create getter and setter based on getterExpression and setterExpression.
      * @param klass

@@ -1,5 +1,6 @@
 package com.tugo.dt.bao;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import java.util.ArrayList;
@@ -14,6 +15,11 @@ public class DataDescriptor
   {
     public final String name;
     public final TypeInfo typeInfo;
+
+    public Field(Field f) {
+      this.name = f.name;
+      this.typeInfo = f.typeInfo;
+    }
 
     public Field(String name, String type)
     {
@@ -42,6 +48,11 @@ public class DataDescriptor
       super(name, type);
       this.getter = getter;
       this.setter = setter;
+    }
+
+    public FieldWithGetterSetter(Field f)
+    {
+      super(f);
     }
 
     public Object getGetter()
@@ -118,6 +129,22 @@ public class DataDescriptor
       return fieldMap.get(name);
     }
 
+    public static FieldListBuilder Builder()
+    {
+      return new FieldListBuilder();
+    }
+
+    public static class FieldListBuilder {
+      List<Field> lst = Lists.newArrayList();
+
+      public FieldListBuilder add(String name, String type) {
+        lst.add(new Field(name, TypeInfo.getTypeInfo(type)));
+        return this;
+      }
+      public FieldList build() {
+        return new FieldList(lst);
+      }
+    }
   }
 
 }
