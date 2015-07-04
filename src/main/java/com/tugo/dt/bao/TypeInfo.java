@@ -16,7 +16,7 @@ public enum TypeInfo
   LONG ("long", 8, long.class, Long.class),
   FLOAT ("float", 4, float.class, Float.class),
   DOUBLE ("double", 8, double.class, Double.class),
-  STRING ("string", -1, String.class, String.class),
+  STRING ("string", 2, String.class, String.class),
   OBJECT ("object", -1, Object.class, Object.class);
 
   private final String name;
@@ -52,7 +52,7 @@ public enum TypeInfo
     return wrapperClass;
   }
 
-  static final TypeInfo[] supportedTypes = new TypeInfo[]{BOOLEAN, BYTE, CHAR, SHORT, INT, LONG, FLOAT, DOUBLE};
+  static final TypeInfo[] supportedTypes = new TypeInfo[]{BOOLEAN, BYTE, CHAR, SHORT, INT, LONG, FLOAT, DOUBLE, STRING};
 
   static final Map<String, TypeInfo> nameToTypeMap = Maps.newHashMap();
   static final Map<Class, TypeInfo> classToTypeMap = Maps.newHashMap();

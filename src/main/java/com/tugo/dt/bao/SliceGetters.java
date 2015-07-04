@@ -120,6 +120,21 @@ public class SliceGetters
     }
   }
 
+  public static class StringGetter extends ByteArrayGetterBase implements PojoUtils.Getter<Slice, String>
+  {
+    public String get(Slice obj)
+    {
+      int idx = ByteArrayHelper.getShort(obj.buffer, obj.offset + start);
+      String str = StringTable.get(idx);
+      return str;
+    }
+
+    public StringGetter(int start)
+    {
+      super(start);
+    }
+  }
+
   /* TODO cache getters as they can be reused */
   public static Object createGetter(DataDescriptor.Field f, int offset) {
     switch(f.typeInfo) {
@@ -139,8 +154,63 @@ public class SliceGetters
         return new FloatGetter(offset);
     case DOUBLE:
         return new DoubleGetter(offset);
+    case STRING:
+      return new StringGetter(offset);
     default:
       return null;
     }
+  }
+
+  /**
+   * Create a generic getter, which usage objects as return value instead of primitives.
+   * @param f
+   * @param offset
+   * @return
+   */
+  public static PojoUtils.Getter<Slice, Object> createObjectGetter(DataDescriptor.Field f, int offset) {
+    return new PojoUtils.Getter<Slice, Object>()
+    {
+      private int offset;
+      private DataDescriptor.Field f;
+      public Object get(Slice s)
+      {
+        Object obj = null;
+        switch(f.getTypeInfo()) {
+        case BOOLEAN:
+          obj = ByteArrayHelper.getBoolean(s.buffer, s.offset + offset);
+          break;
+        case BYTE:
+          obj = s.buffer[s.offset + offset];
+          break;
+        case CHAR:
+          obj = ByteArrayHelper.getChar(s.buffer, s.offset + offset);
+          break;
+        case SHORT:
+          obj = ByteArrayHelper.getShort(s.buffer, s.offset + offset);
+          break;
+        case INT:
+          obj = ByteArrayHelper.getInt(s.buffer, s.offset + offset);
+          break;
+        case LONG:
+          obj = ByteArrayHelper.getLong(s.buffer, s.offset + offset);
+          break;
+        case FLOAT:
+          obj = ByteArrayHelper.getFloat(s.buffer, s.offset + offset);
+          break;
+        case DOUBLE:
+          obj = ByteArrayHelper.getDouble(s.buffer, s.offset + offset);
+          break;
+        default:
+          obj = null;
+        }
+        return obj;
+      }
+
+      private PojoUtils.Getter<Slice, Object> init(DataDescriptor.Field f, int offset) {
+        this.f = f;
+        this.offset = offset;
+        return this;
+      }
+    }.init(f, offset);
   }
 }

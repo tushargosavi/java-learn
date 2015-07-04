@@ -109,6 +109,20 @@ public class SliceSetters
     }
   }
 
+  public static class StringSetter extends SliceGetters.ByteArrayGetterBase implements PojoUtils.Setter<Slice, String>
+  {
+    public void set(Slice obj, String str)
+    {
+      short idx = (short) StringTable.add(str);
+      ByteArrayHelper.putShort(obj.buffer, obj.offset + start, idx);
+    }
+
+    public StringSetter(int start)
+    {
+      super(start);
+    }
+  }
+
   /* TODO cache getters as they can be reused */
   public static Object createSetter(DataDescriptor.Field f, int offset)
   {
@@ -129,6 +143,8 @@ public class SliceSetters
       return new FloatSetter(offset);
     case DOUBLE:
       return new DoubleSetter(offset);
+    case STRING:
+      return new StringSetter(offset);
     default:
       return null;
     }
