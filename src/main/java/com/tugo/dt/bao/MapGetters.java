@@ -193,6 +193,8 @@ public class MapGetters
       return new MapGetterFloat(f.name);
     case DOUBLE:
       return new MapGetterDouble(f.name);
+    case STRING:
+      return new MapGetter(f.name);
     default:
       return new MapGetter(f.name);
     }

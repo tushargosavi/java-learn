@@ -157,7 +157,7 @@ public class SliceGetters
     case STRING:
       return new StringGetter(offset);
     default:
-      return null;
+      throw new UnsupportedOperationException("Can't get request operation");
     }
   }
 

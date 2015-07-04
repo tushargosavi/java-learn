@@ -17,8 +17,9 @@ public class MapAdapterTest
     Map<String, Object> map = Maps.newHashMap();
     map.put("field1", new Integer(45));
     map.put("field2", new Long(45));
-
-    DataDescriptor.FieldList flist = DataDescriptor.FieldList.Builder().add("field1", "int").add("field2", "long").build();
+    map.put("strfield", "Tushar Gosavi");
+    DataDescriptor.FieldList flist = DataDescriptor.FieldList.Builder().add("field1", "int").add("field2", "long")
+    .add("strfield", "string").build();
     MapAdapter ma = new MapAdapter(flist);
 
     Slice s = ma.getNewBaoInstance(map);
@@ -26,5 +27,8 @@ public class MapAdapterTest
     PojoUtils.GetterInt getter = (PojoUtils.GetterInt) bao.getGetter("field1");
     System.out.println("size of slice is " + s.length);
     System.out.println("value of int is " + getter.get(s));
+
+    PojoUtils.Getter gt = (PojoUtils.Getter) bao.getGetter("strfield");
+    System.out.println("sting getter  " + gt.get(s));
   }
 }
